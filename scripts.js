@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
-    const googleDriveFolderId = "YOUR_GOOGLE_DRIVE_FOLDER_ID"; // Replace with your Google Drive folder ID
-    const apiKey = "YOUR_GOOGLE_DRIVE_API_KEY"; // Replace with your Google Drive API key
+    const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
+    const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
