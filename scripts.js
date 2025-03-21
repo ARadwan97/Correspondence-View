@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
+    const googleSheetsApiUrl = "https://script.google.com/macros/s/AKfycbwjWhCF0TrHxStnq5hMcsKL1QtkAFfRu6a9C2rZUYZwWh7MdG2kF1Wq04_ztx64yx-j/exec"; // Replace with your Google Sheets API URL
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
@@ -19,11 +20,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.className = "comment-section";
                     commentSection.innerHTML = `
                         <h2>Comments for ${file.name}</h2>
-                        <form class="comment-form">
+                        <form class="comment-form" data-pdf-id="${file.id}">
                             <textarea class="comment-input" placeholder="Add a comment..." rows="4"></textarea>
                             <button type="submit">Submit</button>
                         </form>
-                        <div class="comments-container">
+                        <div class="comments-container" data-pdf-id="${file.id}">
                             <!-- Comments will be displayed here -->
                         </div>
                     `;
@@ -32,6 +33,48 @@ document.addEventListener("DOMContentLoaded", function () {
                     pdfContainer.appendChild(commentSection);
                 }
             });
+
+            // Add event listeners for comment forms
+            document.querySelectorAll('.comment-form').forEach(form => {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    const pdfId = this.getAttribute('data-pdf-id');
+                    const commentInput = this.querySelector('.comment-input');
+                    const comment = commentInput.value;
+
+                    // Submit comment to the Google Sheets API
+                    fetch(googleSheetsApiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ pdfId, comment })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            commentInput.value = '';
+                            loadComments(pdfId);
+                        })
+                        .catch(error => console.error('Error submitting comment:', error));
+                });
+            });
+
+            // Load comments for each PDF
+            data.files.forEach(file => {
+                if (file.mimeType === "application/pdf") {
+                    loadComments(file.id);
+                }
+            });
+
+            function loadComments(pdfId) {
+                fetch(`${googleSheetsApiUrl}?pdfId=${pdfId}`)
+                    .then(response => response.json())
+                    .then(comments => {
+                        const commentsContainer = document.querySelector(`.comments-container[data-pdf-id="${pdfId}"]`);
+                        commentsContainer.innerHTML = comments.map(comment => `<p>${comment.comment}</p>`).join('');
+                    })
+                    .catch(error => console.error('Error loading comments:', error));
+            }
         })
         .catch(error => console.error("Error fetching files from Google Drive:", error));
 });
