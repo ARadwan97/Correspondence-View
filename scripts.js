@@ -2,9 +2,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
-    const githubRepoOwner = "ARadwan97"; // Replace with your GitHub username
-    const githubRepoName = "correspondence-view"; // Replace with your GitHub repository name
-    const githubToken = "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"; // Replace with your GitHub token
+    const clientId = "898372359689-nepv7lbtge136m2s64a0b3ehdr36hepa.apps.googleusercontent.com"; // Replace with your Google OAuth client ID
+    
+    // Load the Google Drive API
+    gapi.load('client:auth2', initClient);
+
+    function initClient() {
+        gapi.client.init({
+            apiKey: apiKey,
+            clientId: clientId,
+            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+            scope: 'https://www.googleapis.com/auth/drive.file'
+        }).then(() => {
+            const authInstance = gapi.auth2.getAuthInstance();
+            if (!authInstance.isSignedIn.get()) {
+                authInstance.signIn();
+            }
+        });
+    }
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
@@ -44,45 +59,40 @@ document.addEventListener("DOMContentLoaded", function () {
                     const commentInput = this.querySelector('.comment-input');
                     const comment = commentInput.value;
 
-                        // Submit comment to the GitHub repository
-                    fetch(`https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/dispatches`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `token ${githubToken}`
-                        },
-                        body: JSON.stringify({
-                            event_type: 'add_comment',
-                            client_payload: {
-                                comment: `PDF ID: ${pdfId}\nComment: ${comment}`
-                            }
+                    // Submit comment to Google Drive
+                    const authInstance = gapi.auth2.getAuthInstance();
+                    if (authInstance.isSignedIn.get()) {
+                        const accessToken = authInstance.currentUser.get().getAuthResponse().access_token;
+                        fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=media`, {
+                            method: 'PATCH',
+                            headers: {
+                                'Authorization': `Bearer ${accessToken}`,
+                                'Content-Type': 'text/plain'
+                            },
+                            body: comment
                         })
-                    })
                         .then(response => {
                             if (response.ok) {
                                 commentInput.value = '';
-                                loadComments();
+                                loadComments(pdfId);
                             } else {
-                                return response.json().then(error => {
-                                    throw new Error(`Error submitting comment: ${error.message}`);
-                                });
+                                console.error('Error submitting comment:', response.statusText);
                             }
                         })
-                        .catch(error => console.error(error.message));
+                        .catch(error => console.error('Error submitting comment:', error));
+                    }
                 });
             });
 
-            function loadComments() {
-                fetch(`https://raw.githubusercontent.com/${githubRepoOwner}/${githubRepoName}/main/comments.txt`)
-                    .then(response => response.text())
-                    .then(data => {
-                        const commentsContainer = document.querySelector('.comments-container');
-                        commentsContainer.innerHTML = data.split('\n').map(comment => `<p>${comment}</p>`).join('');
+            function loadComments(pdfId) {
+                fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
+                    .then(response => response.json())
+                    .then(comments => {
+                        const commentsContainer = document.querySelector(`.comments-container[data-pdf-id="${pdfId}"]`);
+                        commentsContainer.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
                     })
                     .catch(error => console.error('Error loading comments:', error));
             }
-
-            loadComments();
         })
         .catch(error => console.error("Error fetching files from Google Drive:", error));
 });
