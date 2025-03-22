@@ -232,6 +232,8 @@ button[type="submit"]:hover {
 .comment-text {
     white-space: pre-wrap;
     word-break: break-word;
+    color: red;
+    font-size: 20px;
 }
 
 .no-comments {
