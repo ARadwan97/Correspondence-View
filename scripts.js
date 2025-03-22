@@ -1,21 +1,3 @@
-// Authentication check at the start of the file
-if (!sessionStorage.getItem('isAuthenticated')) {
-    window.location.href = 'login.html';
-}
-    // Get authenticated username
-    const currentUser = sessionStorage.getItem('username') || 'm.eltayeb';
-
-    // Add logout button
-    const logoutButton = document.createElement('button');
-    logoutButton.className = 'logout-button';
-    logoutButton.textContent = 'Logout';
-    document.body.insertBefore(logoutButton, document.body.firstChild);
-
-    logoutButton.addEventListener('click', function() {
-        sessionStorage.removeItem('isAuthenticated');
-        sessionStorage.removeItem('username');
-        window.location.href = 'login.html';
-    });
 document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
