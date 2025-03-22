@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.innerHTML = `
                         <div class="metadata">
                             <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
-                            <p>Current User's Login: ARadwan97</p>
+                            <p>Current User's Login: ${currentUser}</p>
                         </div>
                         <h2>Comments for ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
