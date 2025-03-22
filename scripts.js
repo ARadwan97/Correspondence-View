@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
-    const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmTxlDdiQAkM5H3Ul_C75zCC8eN35pHNOOPL5faSsw-FD3Uj62B65O7Ve7VKf92u2b/exec';
 
     // Function to format date
     function formatDate(date) {
