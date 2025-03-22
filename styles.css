@@ -282,3 +282,63 @@ button[type="submit"]:hover {
         font-size: 14px;
     }
 }
+.header {
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 80px;
+}
+
+.logo {
+    height: 60px;
+    width: auto;
+}
+
+.logo-left {
+    margin-right: auto;
+}
+
+.logo-right {
+    margin-left: auto;
+}
+
+/* Adjust main content to account for fixed header */
+.pdf-container {
+    margin-top: 100px; /* Header height + some spacing */
+    padding-top: 20px;
+}
+
+/* Update logout button position */
+.logout-button {
+    position: fixed;
+    top: 90px; /* Below the header */
+    right: 20px;
+}
+
+/* Make the page responsive */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px;
+        height: 60px;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    .pdf-container {
+        margin-top: 80px;
+    }
+
+    .logout-button {
+        top: 70px;
+    }
+}
