@@ -2,13 +2,6 @@
 if (!sessionStorage.getItem('isAuthenticated')) {
     window.location.href = 'login.html';
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-    const pdfContainer = document.getElementById("pdf-container");
-    const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
-    const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmTxlDdiQAkM5H3Ul_C75zCC8eN35pHNOOPL5faSsw-FD3Uj62B65O7Ve7VKf92u2b/exec';
-    
     // Get authenticated username
     const currentUser = sessionStorage.getItem('username') || 'm.eltayeb';
 
@@ -23,6 +16,11 @@ document.addEventListener("DOMContentLoaded", function () {
         sessionStorage.removeItem('username');
         window.location.href = 'login.html';
     });
+document.addEventListener("DOMContentLoaded", function () {
+    const pdfContainer = document.getElementById("pdf-container");
+    const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
+    const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmTxlDdiQAkM5H3Ul_C75zCC8eN35pHNOOPL5faSsw-FD3Uj62B65O7Ve7VKf92u2b/exec';
 
     // Function to format date
     function formatDate(date) {
@@ -31,26 +29,48 @@ document.addEventListener("DOMContentLoaded", function () {
             .slice(0, 19);
     }
 
-    // Function to update current time
-    function updateCurrentTime() {
-        const timeElements = document.querySelectorAll('.current-time');
-        const now = new Date();
-        timeElements.forEach(element => {
-            element.textContent = formatDate(now);
-        });
+    // Function to fetch comments for a PDF
+    async function fetchComments(pdfId) {
+        try {
+            const response = await fetch(`${SCRIPT_URL}?action=getComments&pdfId=${pdfId}`);
+            const comments = await response.json();
+            return comments;
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+            return [];
+        }
     }
 
+    // Function to render comments
+    function renderComments(comments, container) {
+        container.innerHTML = comments.length ? '' : '<p class="no-comments">No comments yet</p>';
+        
+        comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+            .forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment';
+                commentElement.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-user">${comment.user}</span>
+                        <span class="comment-date">${new Date(comment.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="comment-text">${comment.comment}</div>
+                `;
+                container.appendChild(commentElement);
+            });
+    }
+
+    // Function to submit comment
     async function submitComment(formData) {
         try {
+            const now = new Date();
             const data = {
-                timestamp: formatDate(new Date()),
-                user: currentUser, // Use authenticated username
+                timestamp: formatDate(now),
+                user: 'ARadwan97',
                 pdfId: formData.pdfId,
                 pdfName: formData.pdfName,
                 comment: formData.comment
             };
-
-            console.log('Submitting data:', data); // Debug log
 
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
@@ -85,6 +105,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Function to update current time
+    function updateCurrentTime() {
+        const timeElements = document.querySelectorAll('.current-time');
+        const now = new Date();
+        timeElements.forEach(element => {
+            element.textContent = formatDate(now);
+        });
+    }
+
     // Fetch PDFs and create viewers
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
         .then(response => response.json())
@@ -105,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.innerHTML = `
                         <div class="metadata">
                             <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
-                            <p>Current User's Login: ${currentUser}</p>
+                            <p>Current User's Login: ARadwan97</p>
                         </div>
                         <h2>Comments for ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
