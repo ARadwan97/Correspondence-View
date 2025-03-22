@@ -1,27 +1,45 @@
 document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
-    const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
-    const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
-    const clientId = "898372359689-nepv7lbtge136m2s64a0b3ehdr36hepa.apps.googleusercontent.com"; // Replace with your Google OAuth client ID
+    const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
+    const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
     
-    // Load the Google Drive API
-    gapi.load('client:auth2', initClient);
+    // Replace this with your deployed Apps Script URL
+    const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
 
-    function initClient() {
-        gapi.client.init({
-            apiKey: apiKey,
-            clientId: clientId,
-            discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-            scope: 'https://www.googleapis.com/auth/drive.file'
-        }).then(() => {
-            const authInstance = gapi.auth2.getAuthInstance();
-            if (!authInstance.isSignedIn.get()) {
-                authInstance.signIn();
-            }
-        });
+    // Function to submit comment to Google Sheet
+    async function submitComment(formData) {
+        try {
+            console.log('Submitting comment:', formData);
+
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Important for CORS handling
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(formData).toString()
+            });
+
+            console.log('Response received:', response);
+
+            // Show success message
+            const form = document.querySelector(`form[data-pdf-id="${formData.pdfId}"]`);
+            const successMsg = document.createElement('div');
+            successMsg.className = 'success-message';
+            successMsg.textContent = 'Comment saved successfully!';
+            form.appendChild(successMsg);
+            setTimeout(() => successMsg.remove(), 3000);
+
+            // Clear the input
+            form.querySelector('.comment-input').value = '';
+
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+            alert('Error saving comment: ' + error.message);
+        }
     }
 
-    // Fetch the list of PDFs from the Google Drive folder
+    // Fetch PDFs and create viewers
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
         .then(response => response.json())
         .then(data => {
@@ -37,13 +55,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.className = "comment-section";
                     commentSection.innerHTML = `
                         <h2>Comments for ${file.name}</h2>
-                        <form class="comment-form" data-pdf-id="${file.id}">
-                            <textarea class="comment-input" placeholder="Add a comment..." rows="4"></textarea>
-                            <button type="submit">Submit</button>
+                        <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
+                            <textarea class="comment-input" placeholder="Add a comment..." rows="4" required></textarea>
+                            <button type="submit">Submit Comment</button>
                         </form>
-                        <div class="comments-container" data-pdf-id="${file.id}">
-                            <!-- Comments will be displayed here -->
-                        </div>
+                        <div class="comments-container" data-pdf-id="${file.id}"></div>
                     `;
 
                     pdfContainer.appendChild(pdfViewer);
@@ -55,44 +71,24 @@ document.addEventListener("DOMContentLoaded", function () {
             document.querySelectorAll('.comment-form').forEach(form => {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault();
-                    const pdfId = this.getAttribute('data-pdf-id');
-                    const commentInput = this.querySelector('.comment-input');
-                    const comment = commentInput.value;
+                    console.log('Form submitted');
+                    
+                    const formData = {
+                        user: 'ARadwan97',
+                        pdfId: this.getAttribute('data-pdf-id'),
+                        pdfName: this.getAttribute('data-pdf-name'),
+                        comment: this.querySelector('.comment-input').value.trim()
+                    };
 
-                    // Submit comment to Google Drive
-                    const authInstance = gapi.auth2.getAuthInstance();
-                    if (authInstance.isSignedIn.get()) {
-                        const accessToken = authInstance.currentUser.get().getAuthResponse().access_token;
-                        fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=media`, {
-                            method: 'PATCH',
-                            headers: {
-                                'Authorization': `Bearer ${accessToken}`,
-                                'Content-Type': 'text/plain'
-                            },
-                            body: comment
-                        })
-                        .then(response => {
-                            if (response.ok) {
-                                commentInput.value = '';
-                                loadComments(pdfId);
-                            } else {
-                                console.error('Error submitting comment:', response.statusText);
-                            }
-                        })
-                        .catch(error => console.error('Error submitting comment:', error));
+                    console.log('Form data:', formData);
+
+                    if (formData.comment) {
+                        submitComment(formData);
                     }
                 });
             });
-
-            function loadComments(pdfId) {
-                fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
-                    .then(response => response.json())
-                    .then(comments => {
-                        const commentsContainer = document.querySelector(`.comments-container[data-pdf-id="${pdfId}"]`);
-                        commentsContainer.innerHTML = comments.map(comment => `<p>${comment}</p>`).join('');
-                    })
-                    .catch(error => console.error('Error loading comments:', error));
-            }
         })
-        .catch(error => console.error("Error fetching files from Google Drive:", error));
+        .catch(error => {
+            console.error('Error fetching PDFs:', error);
+        });
 });
