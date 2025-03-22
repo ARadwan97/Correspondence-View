@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     pdfViewer.innerHTML = `
                         <iframe src="https://docs.google.com/gview?url=https://drive.google.com/uc?export=download%26id=${file.id}&embedded=true" 
                                 width="600" 
-                                height="800">
+                                height="1000">
                         </iframe>
                     `;
 
@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.innerHTML = `
                         <div class="metadata">
                             <p>التاريخ والوقت (توقيت القاهرة): <span class="current-time">${formatDate(new Date())}</span></p>
-                            <p>المستخدم الحالي: m.eltayeb</p>
+                            <p> m.eltayeb :المستخدم الحالي</p>
                         </div>
                         <h2>التأشيرات على ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
@@ -144,9 +144,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             <button type="submit">توقيع</button>
                         </form>
                         <div class="comments-section">
-                            <h3>التأشيرات السابقة</h3>
+                            <h3>التأشيرات المقترحة</h3>
                             <div class="comments-container" data-pdf-id="${file.id}">
-                                <p class="loading-comments">جاري تحميل التاشيرات السابقة</p>
+                                <p class="loading-comments">جاري تحميل التاشيرات المقترحة</p>
                             </div>
                         </div>
                     `;
