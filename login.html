@@ -116,5 +116,31 @@
             window.location.href = 'index.html';
         }
     </script>
+    <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const passcode = document.getElementById('passcode').value;
+        
+        // Check credentials
+        if (username === 'm.eltayeb' && passcode === '7888') {
+            // Store authentication in sessionStorage
+            sessionStorage.setItem('isAuthenticated', 'true');
+            sessionStorage.setItem('username', 'm.eltayeb'); // Store the correct username
+            
+            // Redirect to main page
+            window.location.href = 'index.html';
+        } else {
+            // Show error message
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    });
+
+    // Check if already authenticated
+    if (sessionStorage.getItem('isAuthenticated') === 'true') {
+        window.location.href = 'index.html';
+    }
+</script>
 </body>
 </html>
