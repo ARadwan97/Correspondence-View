@@ -256,3 +256,29 @@ button[type="submit"]:hover {
 .loading-comments {
     animation: pulse 1.5s infinite ease-in-out;
 }
+.logout-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+    .logout-button {
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}
