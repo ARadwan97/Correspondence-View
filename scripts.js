@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const pdfViewer = document.createElement("div");
                     pdfViewer.className = "pdf-viewer";
                     pdfViewer.innerHTML = `
-                        <iframe src="https://drive.google.com/file/d/${file.id}/preview" width="600" height="800"></iframe>
+                        <iframe src="https://docs.google.com/gview?url=https://drive.google.com/uc?export=download%26id=${file.id}&embedded=true" width="600" height="800"></iframe>
                     `;
 
                     const commentSection = document.createElement("div");
