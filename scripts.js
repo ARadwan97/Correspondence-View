@@ -69,16 +69,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         </iframe>
                     `;
 
-                    const commentSection = document.createElement("div");
-                    commentSection.className = "comment-section";
-                    commentSection.innerHTML = `
-                        <h2>Comments for ${file.name}</h2>
-                        <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
-                            <textarea class="comment-input" placeholder="Add a comment..." rows="4" required></textarea>
-                            <button type="submit">Submit Comment</button>
-                        </form>
-                        <div class="comments-container" data-pdf-id="${file.id}"></div>
-                    `;
+                    // Update the commentSection creation in your scripts.js
+const commentSection = document.createElement("div");
+commentSection.className = "comment-section";
+commentSection.innerHTML = `
+    <div class="metadata">
+        <p>Current Date and Time (UTC): ${new Date().toISOString().replace('T', ' ').slice(0, 19)}</p>
+        <p>User: ARadwan97</p>
+    </div>
+    <h2>Comments for ${file.name}</h2>
+    <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
+        <textarea class="comment-input" placeholder="Add a comment..." rows="4" required></textarea>
+        <button type="submit">Submit Comment</button>
+    </form>
+    <div class="comments-container" data-pdf-id="${file.id}"></div>
+`;
 
                     pdfContainer.appendChild(pdfViewer);
                     pdfContainer.appendChild(commentSection);
