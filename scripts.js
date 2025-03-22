@@ -1,3 +1,47 @@
+// Add this at the beginning of your existing scripts.js file
+// Authentication check
+if (!sessionStorage.getItem('isAuthenticated')) {
+    window.location.href = 'login.html';
+}
+
+// Get username from session
+const currentUser = sessionStorage.getItem('username');
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Add logout button to the page
+    const logoutButton = document.createElement('button');
+    logoutButton.className = 'logout-button';
+    logoutButton.textContent = 'Logout';
+    document.body.insertBefore(logoutButton, document.body.firstChild);
+
+    // Logout functionality
+    logoutButton.addEventListener('click', function() {
+        sessionStorage.removeItem('isAuthenticated');
+        sessionStorage.removeItem('username');
+        window.location.href = 'login.html';
+    });
+
+    // Your existing code...
+    // Replace 'ARadwan97' with currentUser in your code
+    const pdfContainer = document.getElementById("pdf-container");
+    // ... rest of your existing code ...
+
+    // Update where you use the username
+    async function submitComment(formData) {
+        try {
+            const data = {
+                timestamp: formatDate(new Date()),
+                user: currentUser, // Use the logged-in username
+                pdfId: formData.pdfId,
+                pdfName: formData.pdfName,
+                comment: formData.comment
+            };
+            // ... rest of your submitComment function ...
+        } catch (error) {
+            console.error('Error submitting comment:', error);
+            alert('Error saving comment. Please try again.');
+        }
+    }
 document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
