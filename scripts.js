@@ -2,7 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
-    const googleSheetsApiUrl = "https://script.google.com/macros/s/AKfycbwobzfbPP7cqP3ywjbnP2UkMiCWVIcZBsn07Hwi2iBHmbzCjALlrftSpzQU4XgmyQ7m/exec"; // Replace with your updated Google Sheets API URL
+    const githubRepoOwner = "ARadwan97"; // Replace with your GitHub username
+    const githubRepoName = "comments-repo"; // Replace with your GitHub repository name
+    const githubToken = "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"; // Replace with your GitHub token
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
@@ -42,39 +44,43 @@ document.addEventListener("DOMContentLoaded", function () {
                     const commentInput = this.querySelector('.comment-input');
                     const comment = commentInput.value;
 
-                    // Submit comment to the Google Sheets API
-                    fetch(googleSheetsApiUrl, {
+                    // Submit comment to the GitHub repository
+                    fetch(`https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/dispatches`, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `token ${githubToken}`
                         },
-                        body: JSON.stringify({ pdfId, comment })
+                        body: JSON.stringify({
+                            event_type: 'add_comment',
+                            client_payload: {
+                                comment: `PDF ID: ${pdfId}\nComment: ${comment}`
+                            }
+                        })
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            commentInput.value = '';
-                            loadComments(pdfId);
+                        .then(response => {
+                            if (response.ok) {
+                                commentInput.value = '';
+                                loadComments();
+                            } else {
+                                console.error('Error submitting comment:', response.statusText);
+                            }
                         })
                         .catch(error => console.error('Error submitting comment:', error));
                 });
             });
 
-            // Load comments for each PDF
-            data.files.forEach(file => {
-                if (file.mimeType === "application/pdf") {
-                    loadComments(file.id);
-                }
-            });
-
-            function loadComments(pdfId) {
-                fetch(`${googleSheetsApiUrl}?pdfId=${pdfId}`)
-                    .then(response => response.json())
-                    .then(comments => {
-                        const commentsContainer = document.querySelector(`.comments-container[data-pdf-id="${pdfId}"]`);
-                        commentsContainer.innerHTML = comments.map(comment => `<p>${comment.comment}</p>`).join('');
+            function loadComments() {
+                fetch(`https://raw.githubusercontent.com/${githubRepoOwner}/${githubRepoName}/main/comments.txt`)
+                    .then(response => response.text())
+                    .then(data => {
+                        const commentsContainer = document.querySelector('.comments-container');
+                        commentsContainer.innerHTML = data.split('\n').map(comment => `<p>${comment}</p>`).join('');
                     })
                     .catch(error => console.error('Error loading comments:', error));
             }
+
+            loadComments();
         })
         .catch(error => console.error("Error fetching files from Google Drive:", error));
 });
