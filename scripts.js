@@ -1,4 +1,12 @@
+
 document.addEventListener("DOMContentLoaded", function () {
+    const header = document.createElement('header');
+    header.className = 'header';
+    header.innerHTML = `
+        <img src="logo-dmo.png" alt="Left Logo" class="logo logo-left">
+        <img src="logo-dmo1.png" alt="Right Logo" class="logo logo-right">
+    `;
+    document.body.insertBefore(header, document.body.firstChild);
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM";
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
