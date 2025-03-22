@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
     
     // Replace this with your deployed Apps Script URL
-    const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzQdiTkWlGER9bhR4hRwksPug9vnqjU4sUjOMh8zOT4vwkPQ-KEHQ8assGtmOpNYpWv/exec';
 
     // Function to submit comment to Google Sheet
     async function submitComment(formData) {
