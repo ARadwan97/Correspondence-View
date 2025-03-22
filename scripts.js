@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
     const githubRepoOwner = "ARadwan97"; // Replace with your GitHub username
     const githubRepoName = "comments-repo"; // Replace with your GitHub repository name
-    const githubToken = "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"; // Replace with your GitHub token
+    const githubToken = "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"; // Replace with your GitHub token
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
