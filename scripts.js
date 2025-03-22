@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const pdfContainer = document.getElementById("pdf-container");
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
-    const googleSheetsApiUrl = "https://script.google.com/macros/s/AKfycbxT0MF4FFFpn2CwthoaVKYIgkWJ_KL9cEiUhqUoOMZtTsTSDwyqeR5jyW-j4Vx-3JUe/exec"; // Replace with your updated Google Sheets API URL
+    const googleSheetsApiUrl = "https://script.google.com/macros/s/AKfycbwobzfbPP7cqP3ywjbnP2UkMiCWVIcZBsn07Hwi2iBHmbzCjALlrftSpzQU4XgmyQ7m/exec"; // Replace with your updated Google Sheets API URL
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
