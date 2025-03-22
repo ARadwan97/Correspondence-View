@@ -128,13 +128,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
                             <p>Current User's Login: DR. M.Eltayeb</p>
                         </div>
-                        <h2>تأشيرات ${file.name}</h2>
+                        <h2> ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
                             <textarea class="comment-input" placeholder="برجاء اضاقة التأشيرة" rows="4" required></textarea>
                             <button type="submit">توقيع</button>
                         </form>
                         <div class="comments-section">
-                            <h3>التأشيرات السابقة</h3>
+                            <h3>التأشيرات المقترحة</h3>
                             <div class="comments-container" data-pdf-id="${file.id}">
                                 <p class="loading-comments">جاري تحميل التأشيرات المقترحة</p>
                             </div>
