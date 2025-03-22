@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const googleDriveFolderId = "1Rhzwhk8XdhjBEOjv3r8QvrIWtW-SrtzM"; // Replace with your Google Drive folder ID
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w"; // Replace with your Google Drive API key
     const githubRepoOwner = "ARadwan97"; // Replace with your GitHub username
-    const githubRepoName = "comments-repo"; // Replace with your GitHub repository name
-    const githubToken = "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"; // Replace with your GitHub token
+    const githubRepoName = "correspondence-view"; // Replace with your GitHub repository name
+    const githubToken = "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"; // Replace with your GitHub token
 
     // Fetch the list of PDFs from the Google Drive folder
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const commentInput = this.querySelector('.comment-input');
                     const comment = commentInput.value;
 
-                    // Submit comment to the GitHub repository
+                        // Submit comment to the GitHub repository
                     fetch(`https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/dispatches`, {
                         method: 'POST',
                         headers: {
@@ -63,10 +63,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                 commentInput.value = '';
                                 loadComments();
                             } else {
-                                console.error('Error submitting comment:', response.statusText);
+                                return response.json().then(error => {
+                                    throw new Error(`Error submitting comment: ${error.message}`);
+                                });
                             }
                         })
-                        .catch(error => console.error('Error submitting comment:', error));
+                        .catch(error => console.error(error.message));
                 });
             });
 
