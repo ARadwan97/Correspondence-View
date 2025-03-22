@@ -95,4 +95,57 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         })
         .catch(error => console.error("Error fetching files from Google Drive:", error));
+    // Add these functions to your existing scripts.js
+function initializeSheet() {
+    const authInstance = gapi.auth2.getAuthInstance();
+    if (authInstance.isSignedIn.get()) {
+        // Load the Google Sheets API
+        gapi.client.load('sheets', 'v4', () => {
+            console.log('Sheets API loaded');
+        });
+    }
+}
+
+function saveCommentToSheet(pdfId, comment) {
+    const spreadsheetId = '1Hx4pZt2EFz1UcEbFWtkonNF5GCF4Z9n1KMEoPPim-WY'; // Replace with your Google Sheet ID
+    const range = 'Sheet1!A:C';
+    
+    const values = [
+        [new Date().toISOString(), pdfId, comment]
+    ];
+
+    gapi.client.sheets.spreadsheets.values.append({
+        spreadsheetId: spreadsheetId,
+        range: range,
+        valueInputOption: 'RAW',
+        insertDataOption: 'INSERT_ROWS',
+        resource: {
+            values: values
+        }
+    }).then((response) => {
+        console.log('Comment saved to sheet');
+    }, (error) => {
+        console.error('Error saving comment:', error);
+    });
+}
+
+// Update your initialization
+function initClient() {
+    gapi.client.init({
+        apiKey: apiKey,
+        clientId: clientId,
+        discoveryDocs: [
+            "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest",
+            "https://sheets.googleapis.com/$discovery/rest?version=v4"
+        ],
+        scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets'
+    }).then(() => {
+        const authInstance = gapi.auth2.getAuthInstance();
+        if (!authInstance.isSignedIn.get()) {
+            authInstance.signIn();
+        } else {
+            initializeSheet();
+        }
+    });
+}
 });
