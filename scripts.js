@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentElement.innerHTML = `
                     <div class="comment-header">
                         <span class="comment-user">${comment.user}</span>
-                        <span class="comment-date">${new Date(comment.timestamp).toLocaleString()}</span>
+                        
                     </div>
                     <div class="comment-text">${comment.comment}</div>
                 `;
