@@ -4,6 +4,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz18mgZLwc3UOVOpsRZL36UAMLxnNNEkyQBP7ug9TCcMUbPaXdG_AYS72Y-9pTSOo8a/exec';
 
+    // Create header
+    const header = document.createElement('header');
+    header.className = 'header';
+    header.innerHTML = `
+        <img src="logo-dmo.png" alt="Left Logo" class="logo logo-left">
+        <div class="header-title">شاشة عرض بوسطة مكتب نائب الوزير</div>
+        <img src="logo-dmo1.png" alt="Right Logo" class="logo logo-right">
+    `;
+    document.body.insertBefore(header, document.body.firstChild);
+
     // Function to format date
     function formatDate(date) {
         return date.toISOString()
@@ -25,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to render comments
     function renderComments(comments, container) {
-        container.innerHTML = comments.length ? '' : '<p class="no-comments">No comments yet</p>';
+        container.innerHTML = comments.length ? '' : '<p class="no-comments">لا يوجد تأشيرة مقترحة </p>';
         
         comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
             .forEach(comment => {
@@ -47,8 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const now = new Date();
             const data = {
-                timestamp: formatDate(now),
-                user: 'ARadwan97',
+                timestamp: formatDate(now+2),
+                user: 'DR. M.Eltayeb',
                 pdfId: formData.pdfId,
                 pdfName: formData.pdfName,
                 comment: formData.comment
@@ -68,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const form = document.querySelector(`form[data-pdf-id="${formData.pdfId}"]`);
                 const successMsg = document.createElement('div');
                 successMsg.className = 'success-message';
-                successMsg.textContent = 'Comment saved successfully!';
+                successMsg.textContent = 'تم التأشير بنجاح وجاري التنفيذ';
                 form.appendChild(successMsg);
                 
                 // Clear the input
@@ -79,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const comments = await fetchComments(formData.pdfId);
                 renderComments(comments, commentsContainer);
                 
-                setTimeout(() => successMsg.remove(), 3000);
+                setTimeout(() => successMsg.remove(), 300000);
             }
         } catch (error) {
             console.error('Error submitting comment:', error);
@@ -92,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const timeElements = document.querySelectorAll('.current-time');
         const now = new Date();
         timeElements.forEach(element => {
-            element.textContent = formatDate(now);
+            element.textContent = formatDate(now+2);
         });
     }
 
@@ -107,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     pdfViewer.innerHTML = `
                         <iframe src="https://docs.google.com/gview?url=https://drive.google.com/uc?export=download%26id=${file.id}&embedded=true" 
                                 width="600" 
-                                height="800">
+                                height="1000">
                         </iframe>
                     `;
 
@@ -115,18 +125,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.className = "comment-section";
                     commentSection.innerHTML = `
                         <div class="metadata">
-                            <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
-                            <p>Current User's Login: ARadwan97</p>
+                            <p>Current Date and Time (UTC+2): <span class="current-time">${formatDate(new Date())}</span></p>
+                            <p>Current User's Login: DR. M.Eltayeb</p>
                         </div>
                         <h2>Comments for ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
-                            <textarea class="comment-input" placeholder="Add a comment..." rows="4" required></textarea>
-                            <button type="submit">Submit Comment</button>
+                            <textarea class="comment-input" placeholder="برجاء اضاقة التأشيرة" rows="4" required></textarea>
+                            <button type="submit">توقيع</button>
                         </form>
                         <div class="comments-section">
                             <h3>Existing Comments</h3>
                             <div class="comments-container" data-pdf-id="${file.id}">
-                                <p class="loading-comments">Loading comments...</p>
+                                <p class="loading-comments">جاري تحميل التأشيرات المقترحة</p>
                             </div>
                         </div>
                     `;
