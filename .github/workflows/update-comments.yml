@@ -1,0 +1,25 @@
+ame: Update Comments
+
+on:
+  repository_dispatch:
+    types: [add_comment]
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Update comments file
+        run: |
+          echo "${{ github.event.client_payload.comment }}" >> comments/comments.txt
+
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add comments/comments.txt
+          git commit -m "Add new comment"
+          git push
