@@ -282,9 +282,10 @@ button[type="submit"]:hover {
         font-size: 14px;
     }
 }
+/* Update the header styles */
 .header {
     background-color: white;
-    padding: 10px 20px;
+    padding: 15px 30px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: flex;
     justify-content: space-between;
@@ -294,35 +295,89 @@ button[type="submit"]:hover {
     left: 0;
     right: 0;
     z-index: 1000;
-    height: 80px;
+    height: 120px; /* Increased height */
 }
 
 .logo {
-    height: 60px;
+    height: 100px; /* Increased logo size */
     width: auto;
 }
 
 .logo-left {
-    margin-right: auto;
+    margin-right: 20px;
 }
 
 .logo-right {
-    margin-left: auto;
+    margin-left: 20px;
 }
 
-/* Adjust main content to account for fixed header */
+.header-title {
+    font-size: 28px; /* Larger font size */
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    flex-grow: 1;
+    direction: rtl; /* For Arabic text */
+    margin: 0 30px; /* Add space around the text */
+}
+
+/* Update main content margin to account for larger header */
 .pdf-container {
-    margin-top: 100px; /* Header height + some spacing */
+    margin-top: 140px;
     padding-top: 20px;
 }
 
 /* Update logout button position */
 .logout-button {
     position: fixed;
-    top: 90px; /* Below the header */
+    top: 130px;
     right: 20px;
 }
 
+/* Responsive design updates */
+@media (max-width: 1024px) {
+    .header {
+        height: 100px;
+        padding: 10px 20px;
+    }
+
+    .logo {
+        height: 80px;
+    }
+
+    .header-title {
+        font-size: 24px;
+    }
+
+    .pdf-container {
+        margin-top: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        height: 80px;
+        padding: 10px;
+    }
+
+    .logo {
+        height: 60px;
+    }
+
+    .header-title {
+        font-size: 18px;
+        margin: 0 10px;
+    }
+
+    .pdf-container {
+        margin-top: 100px;
+    }
+
+    .logout-button {
+        top: 90px;
+    }
+}
 /* Make the page responsive */
 @media (max-width: 768px) {
     .header {
