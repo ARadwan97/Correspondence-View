@@ -4,56 +4,77 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmTxlDdiQAkM5H3Ul_C75zCC8eN35pHNOOPL5faSsw-FD3Uj62B65O7Ve7VKf92u2b/exec'; // Your deployed Apps Script URL
 
-    async function submitComment(formData) {
+     // Function to format date
+    function formatDate(date) {
+        return date.toISOString()
+            .replace('T', ' ')
+            .slice(0, 19);
+    }
+
+    // Function to fetch comments for a PDF
+    async function fetchComments(pdfId) {
         try {
-            // Format the date in YYYY-MM-DD HH:MM:SS format
+            const response = await fetch(`${SCRIPT_URL}?action=getComments&pdfId=${pdfId}`);
+            const comments = await response.json();
+            return comments;
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+            return [];
+        }
+    }
+    async function submitComment(formData) {
+     async function submitComment(formData) {
+        try {
             const now = new Date();
-            const formattedDate = now.toISOString().slice(0, 19).replace('T', ' ');
-            
-            // Add timestamp and ensure all required fields
             const data = {
-                timestamp: formattedDate,
+                timestamp: formatDate(now),
                 user: 'ARadwan97',
                 pdfId: formData.pdfId,
                 pdfName: formData.pdfName,
                 comment: formData.comment
             };
 
-            console.log('Submitting data:', data); // Debug log
-
-            // Convert data to URL-encoded format
-            const formBody = new URLSearchParams(data).toString();
-            
             const response = await fetch(SCRIPT_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: formBody
+                body: new URLSearchParams(data)
             });
 
-            // Log the response for debugging
-            console.log('Response status:', response.status);
+            const result = await response.json();
             
-            // Show success message
-            const form = document.querySelector(`form[data-pdf-id="${formData.pdfId}"]`);
-            const successMsg = document.createElement('div');
-            successMsg.className = 'success-message';
-            successMsg.textContent = 'Comment saved successfully!';
-            form.appendChild(successMsg);
-
-            // Clear the input
-            form.querySelector('.comment-input').value = '';
-
-            // Remove success message after 3 seconds
-            setTimeout(() => successMsg.remove(), 3000);
-
+            if (result.result === 'success') {
+                const form = document.querySelector(`form[data-pdf-id="${formData.pdfId}"]`);
+                const successMsg = document.createElement('div');
+                successMsg.className = 'success-message';
+                successMsg.textContent = 'Comment saved successfully!';
+                form.appendChild(successMsg);
+                
+                // Clear the input
+                form.querySelector('.comment-input').value = '';
+                
+                // Refresh comments
+                const commentsContainer = document.querySelector(`.comments-container[data-pdf-id="${formData.pdfId}"]`);
+                const comments = await fetchComments(formData.pdfId);
+                renderComments(comments, commentsContainer);
+                
+                setTimeout(() => successMsg.remove(), 3000);
+            }
         } catch (error) {
             console.error('Error submitting comment:', error);
             alert('Error saving comment. Please try again.');
         }
     }
 
+    // Function to update current time
+    function updateCurrentTime() {
+        const timeElements = document.querySelectorAll('.current-time');
+        const now = new Date();
+        timeElements.forEach(element => {
+            element.textContent = formatDate(now);
+        });
+    }
     // Fetch PDFs and create viewers
     fetch(`https://www.googleapis.com/drive/v3/files?q='${googleDriveFolderId}'+in+parents&key=${apiKey}`)
         .then(response => response.json())
@@ -65,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     pdfViewer.innerHTML = `
                         <iframe src="https://docs.google.com/gview?url=https://drive.google.com/uc?export=download%26id=${file.id}&embedded=true" 
                                 width="600" 
-                                height="800">
+                                height="1000">
                         </iframe>
                     `;
 
