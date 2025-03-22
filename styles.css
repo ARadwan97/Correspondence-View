@@ -166,3 +166,93 @@ button[type="submit"]:hover {
     direction: rtl;
     text-align: right;
 }
+/* Add these to your existing CSS */
+
+/* Metadata Styling */
+.metadata {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.metadata p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.current-time {
+    font-family: monospace;
+    font-weight: bold;
+    color: #0066cc;
+}
+
+/* Comments Section Styling */
+.comments-section {
+    margin-top: 30px;
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+}
+
+.comments-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.comment {
+    background: white;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    direction: rtl;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.comment-user {
+    font-weight: bold;
+    color: #0066cc;
+}
+
+.comment-date {
+    color: #888;
+}
+
+.comment-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.no-comments {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+}
+
+.loading-comments {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+/* Animation for loading state */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.loading-comments {
+    animation: pulse 1.5s infinite ease-in-out;
+}
