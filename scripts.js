@@ -1,9 +1,9 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const header = document.createElement('header');
     header.className = 'header';
     header.innerHTML = `
         <img src="logo-dmo.png" alt="Left Logo" class="logo logo-left">
+        <div class="header-title">شاشة عرض بوسطة مكتب نائب الوزير</div>
         <img src="logo-dmo1.png" alt="Right Logo" class="logo logo-right">
     `;
     document.body.insertBefore(header, document.body.firstChild);
@@ -12,11 +12,23 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiKey = "AIzaSyAVpu1eoWrW5HQPXjree3E24KtTqd1Za-w";
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwmTxlDdiQAkM5H3Ul_C75zCC8eN35pHNOOPL5faSsw-FD3Uj62B65O7Ve7VKf92u2b/exec';
 
-    // Function to format date
+    // Function to format date in Cairo time
     function formatDate(date) {
-        return date.toISOString()
-            .replace('T', ' ')
-            .slice(0, 19);
+        const options = {
+            timeZone: 'Africa/Cairo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        };
+
+        const cairoTime = new Intl.DateTimeFormat('en-GB', options).format(date);
+        const [datePart, timePart] = cairoTime.split(', ');
+        const [day, month, year] = datePart.split('/');
+        return `${year}-${month}-${day} ${timePart}`;
     }
 
     // Function to fetch comments for a PDF
@@ -33,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to render comments
     function renderComments(comments, container) {
-        container.innerHTML = comments.length ? '' : '<p class="no-comments">No comments yet</p>';
+        container.innerHTML = comments.length ? '' : '<p class="no-comments">لا يوجد تأشيرة مقترحة</p>';
         
         comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
             .forEach(comment => {
@@ -42,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 commentElement.innerHTML = `
                     <div class="comment-header">
                         <span class="comment-user">${comment.user}</span>
-                        <span class="comment-date">${new Date(comment.timestamp).toLocaleString()}</span>
+                        <span class="comment-date">${formatDate(new Date(comment.timestamp))}</span>
                     </div>
                     <div class="comment-text">${comment.comment}</div>
                 `;
@@ -56,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const now = new Date();
             const data = {
                 timestamp: formatDate(now),
-                user: 'ARadwan97',
+                user: 'm.eltayeb',
                 pdfId: formData.pdfId,
                 pdfName: formData.pdfName,
                 comment: formData.comment
@@ -76,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const form = document.querySelector(`form[data-pdf-id="${formData.pdfId}"]`);
                 const successMsg = document.createElement('div');
                 successMsg.className = 'success-message';
-                successMsg.textContent = 'Comment saved successfully!';
+                successMsg.textContent = 'تمت التأشيرة وجاري التنفيذ';
                 form.appendChild(successMsg);
                 
                 // Clear the input
@@ -123,18 +135,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.className = "comment-section";
                     commentSection.innerHTML = `
                         <div class="metadata">
-                            <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
-                            <p>Current User's Login: ARadwan97</p>
+                            <p>التاريخ والوقت (توقيت القاهرة): <span class="current-time">${formatDate(new Date())}</span></p>
+                            <p>المستخدم الحالي: m.eltayeb</p>
                         </div>
-                        <h2>Comments for ${file.name}</h2>
+                        <h2>التأشيرات على ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
-                            <textarea class="comment-input" placeholder="Add a comment..." rows="4" required></textarea>
-                            <button type="submit">Submit Comment</button>
+                            <textarea class="comment-input" placeholder="برجاء اضافة تاشيرة" rows="4" required></textarea>
+                            <button type="submit">توقيع</button>
                         </form>
                         <div class="comments-section">
-                            <h3>Existing Comments</h3>
+                            <h3>التأشيرات السابقة</h3>
                             <div class="comments-container" data-pdf-id="${file.id}">
-                                <p class="loading-comments">Loading comments...</p>
+                                <p class="loading-comments">جاري تحميل التاشيرات السابقة</p>
                             </div>
                         </div>
                     `;
@@ -166,8 +178,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
 
-            // Update time every minute
-            setInterval(updateCurrentTime, 60000);
+            // Update time every second for more accurate time display
+            setInterval(updateCurrentTime, 1000);
         })
         .catch(error => {
             console.error('Error fetching PDFs:', error);
