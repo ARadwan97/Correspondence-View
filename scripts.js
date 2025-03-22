@@ -124,13 +124,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     const commentSection = document.createElement("div");
                     commentSection.className = "comment-section";
                     commentSection.innerHTML = `
-                        <div class="metadata">
-                            <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
-                            <p>Current User's Login: DR. M.Eltayeb</p>
-                        </div>
                         <h2> ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
-                            <textarea class="comment-input" placeholder="برجاء اضاقة التأشيرة" rows="4" required></textarea>
+                            <textarea class="comment-input" placeholder="برجاء اضافة التأشيرة" rows="4" required></textarea>
                             <button type="submit">توقيع</button>
                         </form>
                         <div class="comments-section">
