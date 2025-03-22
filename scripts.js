@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const now = new Date();
             const data = {
-                timestamp: formatDate(now+2),
+                timestamp: formatDate(now),
                 user: 'DR. M.Eltayeb',
                 pdfId: formData.pdfId,
                 pdfName: formData.pdfName,
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const timeElements = document.querySelectorAll('.current-time');
         const now = new Date();
         timeElements.forEach(element => {
-            element.textContent = formatDate(now+2);
+            element.textContent = formatDate(now);
         });
     }
 
@@ -125,16 +125,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     commentSection.className = "comment-section";
                     commentSection.innerHTML = `
                         <div class="metadata">
-                            <p>Current Date and Time (UTC+2): <span class="current-time">${formatDate(new Date())}</span></p>
+                            <p>Current Date and Time (UTC): <span class="current-time">${formatDate(new Date())}</span></p>
                             <p>Current User's Login: DR. M.Eltayeb</p>
                         </div>
-                        <h2>Comments for ${file.name}</h2>
+                        <h2>تأشيرات ${file.name}</h2>
                         <form class="comment-form" data-pdf-id="${file.id}" data-pdf-name="${file.name}">
                             <textarea class="comment-input" placeholder="برجاء اضاقة التأشيرة" rows="4" required></textarea>
                             <button type="submit">توقيع</button>
                         </form>
                         <div class="comments-section">
-                            <h3>Existing Comments</h3>
+                            <h3>التأشيرات السابقة</h3>
                             <div class="comments-container" data-pdf-id="${file.id}">
                                 <p class="loading-comments">جاري تحميل التأشيرات المقترحة</p>
                             </div>
